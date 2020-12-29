@@ -1,0 +1,53 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<html>
+    <head>  
+    <meta charset="UTF-8">    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'home/style.css' %}">
+</head>
+    <body>
+        <nav>
+            <button class="logout-btn"><a href="{% url 'auth_logout' %}" >Wyloguj się</a></button>
+        </nav>
+        <div class="first-section">
+            
+            <div>
+                {% if mmessage %}
+                <div class='alert alert-top-message alert-dismissible' role='alert'>
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Zamknij</span></button>
+                    <div class="container">
+                        <h3>{{mmessage.message|safe}}</h3>
+                    </div>
+                </div>
+                {% endif %} 
+            </div>
+            <div class="title">
+                Skracacz adresów URL
+            </div>
+            <div class="description">1) Aby skrócić adres URL, wprowadź go w poniższe pole.</div>
+            <form action="" method="POST">{% csrf_token %}
+                {% render_field form.original_url class="originalUrl-input" placeholder="Wprowadź adres URL" %}                
+                <input type="submit">
+            </form>
+            <h2 style="margin-top: 20px;">lub</h2>
+            <div class="description">2) Aby skrócić adresy URL, wybierz plik formatu .csv.</div>
+            <form action="" enctype="multipart/form-data" method="POST" >{% csrf_token %}
+                {% render_field csvform.csvfile class="filePicker-input"  %}                
+                <input type="submit">
+            </form> 
+            <div>
+                <button class="logout-btn"><a href="{% url 'exportFile' %}" >Wyeksportuj adresy do pliku .csv</a></button>                  
+            </div>
+            <div class="urladdress-list">
+                {% for urlAddress in urls %}
+                <div class="urladdress-list-element">        
+                    <span>Oryginalny adres: {{urlAddress.original_url}}</span> <br>
+                    <span>Zmieniony adres: <a href="{{urlAddress.changed_url}}" target="_blank">{{urlAddress.changed_url}}</a></span>                                                                                            
+                </div>                          
+                {% endfor %}
+            </div>                       
+        </div>
+    </body>
+</html>
